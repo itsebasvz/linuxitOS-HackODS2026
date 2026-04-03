@@ -1,0 +1,11 @@
+# Core data manipulation
+pandas>=2.0.0
+numpy>=1.20.0
+
+# API Requests and Excel parsing
+requests>=2.25.0
+openpyxl>=3.0.0
+
+# Visualization and Dashboard rendering
+plotly>=5.0.0
+jupyter>=1.0.0

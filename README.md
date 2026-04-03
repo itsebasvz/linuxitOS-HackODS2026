@@ -13,6 +13,29 @@ Este proyecto aborda el agua como un derecho humano y entiende la pobreza desde 
 
 **Pregunta central:** ¿Cómo el déficit en la infraestructura de agua potable y saneamiento profundiza la pobreza multidimensional en las zonas rurales o periféricas frente a las zonas urbanas de México?
 
+## Instrucciones de Reproducibilidad (Pipeline Técnico)
+Para cumplir con el rigor de reproducibilidad técnica, todo el flujo de extracción y transformación de datos ha sido automatizado. Para replicarlo:
+
+1. Clonar el repositorio y acceder a la carpeta:
+   ```bash
+   git clone <URL_DEL_REPO>
+   cd linuxitOS-HackODS2026
+   ```
+2. Instalar las dependencias oficiales:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Ejecutar los scripts en el siguiente orden:
+   - `python scripts/siods_extractor.py` (Extrae métricas Nacionales/Estatales vía API).
+   - `python scripts/analyze_iter.py` (Analiza ruralidad municipal con datos de INEGI).
+   - `python scripts/clean_coneval.py` (Limpia datos de pobreza municipal).
+   - `python scripts/merge_inegi_coneval.py` (Cruza los padrones y genera dataset final).
+   - `python scripts/merge_shcp.py` (Integra datos de recaudación financiera y tomas pagadas).
+4. Renderizar el Dashboard interactivo:
+   ```bash
+   quarto render dashboard/index.qmd
+   ```
+
 ## Estructura del repositorio
 - `datos/`: Almacenamiento de datasets en crudo y procesados.
 - `scripts/`: Código y notebooks para extracción, limpieza y cruce de datos.

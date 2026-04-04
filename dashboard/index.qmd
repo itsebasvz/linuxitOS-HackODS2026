@@ -174,7 +174,8 @@ _ = fig_scatter.update_layout(
     xaxis_title="% Sin Agua Entubada (CONAGUA)",
     yaxis_title="% en Pobreza Extrema (CONEVAL)",
     font=dict(family="Inter, sans-serif", size=12),
-    legend=dict(title="Tipo de Municipio", orientation="h", yanchor="bottom", y=-0.2),
+    legend=dict(title="", orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5),
+    margin=dict(b=80),
     height=450,
     shapes=[
         dict(type='line', x0=prom_agua_rural, x1=prom_agua_rural, y0=0, y1=1, yref='paper',
@@ -224,7 +225,8 @@ _ = fig_barras.update_layout(
     yaxis_title="Porcentaje (%)",
     xaxis_title="",
     font=dict(family="Inter, sans-serif", size=11),
-    legend=dict(title=""),
+    legend=dict(title="", orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5),
+    margin=dict(b=80),
     height=450,
     showlegend=True
 )

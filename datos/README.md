@@ -39,12 +39,37 @@ En esta carpeta (`datos/`) guardamos todos los datasets utilizados en crudo y pr
 - **Fecha de descarga:** 02 de abril de 2026 (Archivo original data de Dic 2021).
 - **Licencia:** Libre Uso (Datos Abiertos del Gobierno de México / CONEVAL).
 
-### 4. Dataset Maestro (Elaboración Propia)
+### 4. Finanzas Públicas Municipales (SHCP)
+- **Nombre de archivo:** `derecho_agua_municipal.csv`
+- **Descripción de las variables (Data Dictionary):**
+  - `monto_agua`: Recaudación anual (2020) por derechos de suministro de agua potable.
+  - `tomas_pagadas`: Número de tomas de agua registradas con pago.
+  - `monto_recaudado_percapita`: Cálculo derivado de la recaudación por habitante municipal.
+- **Fuente:** Secretaría de Hacienda y Crédito Público (SHCP) - Estadísticas de Finanzas Públicas Municipales. [Enlace de descarga oficial](https://www.datos.gob.mx/dataset/derechos_agua_municipal).
+- **Fecha de descarga:** 02 de abril de 2026.
+- **Licencia:** Creative Commons Attribution 4.0.
+
+### 5. Cobertura Específica de Agua y Cuencas (CONAGUA)
+- **Nombre de archivo:** `Población con acceso al agua en el año 2020.xlsx`
+- **Descripción de las variables (Data Dictionary):** 
+  - `CVEGEO`: Clave geográfica municipal construida a partir de Entidad y Municipio.
+  - `RHA`: Región Hidrológico-Administrativa (Agrupación por cuencas naturales).
+  - `Población Cobertura(%)`: Porcentaje de cobertura específica de agua entubada en el municipio.
+  - *Nota técnica:* Se generó la variable derivada `carencia_agua_conagua_pct` (`100 - Cobertura`) para medir el déficit directo (ODS 6). No se utilizaron las métricas demográficas de este archivo para evitar conflictos con el Censo INEGI 2020.
+- **Fuente:** Comisión Nacional del Agua (CONAGUA) - Sistema Nacional de Información del Agua (SINA). [Consulta interactiva de coberturas](https://sinav30.conagua.gob.mx:8080/Estadistico/#/coberturas).
+- **Fecha de descarga:** 03 de abril de 2026.
+- **Licencia:** [Datos Abiertos de México (Libre Uso)](https://app.conagua.gob.mx/datosabiertoscna/index.html#:~:text=Los%20datos%20abiertos%20son%20datos%20que%20pueden,de%20la%20misma%20manera%20en%20que%20aparecen).
+
+---
+
+### 6. Dataset Maestro (Elaboración Propia - Reproducibilidad)
 - **Nombre de archivo:** `final_merged_data.csv`
-- **Descripción de las variables (Data Dictionary):** Unificación de los microdatos del INEGI y CONEVAL. Incluye las variables de pobreza ya mencionadas, más el cálculo propio de ruralidad:
-  - `poblacion_total`: Sumatoria de habitantes del municipio.
-  - `pct_rural`: Porcentaje matemático de población viviendo en localidades < 2500 habs.
-  - `clasificacion_rural`: Etiqueta categórica (`Rural` o `Urbano`) basada en si el `pct_rural` > 50%.
-- **Fuente:** Elaboración propia (Equipo linuxitOS) con base en cruces de datos abiertos del INEGI (ITER) y CONEVAL.
-- **Fecha de generación:** 02 de abril de 2026.
+- **Descripción de las variables (Data Dictionary):** Unificación consolidada de los microdatos de INEGI, CONEVAL, SHCP y CONAGUA. Las variables principales incluyen:
+  - `CVEGEO`, `Municipio`, `poblacion_total`, `pct_rural`, `clasificacion_rural` (INEGI / Cálculo propio de ruralidad).
+  - `Pobreza_pct`, `Pobreza_extrema_pct`, `Carencia_servicios_pct` (CONEVAL).
+  - `monto_agua`, `tomas_pagadas`, `monto_recaudado_percapita` (SHCP).
+  - `RHA`, `cobertura_agua_conagua_pct`, `carencia_agua_conagua_pct` (CONAGUA).
+- **Fuente:** Elaboración propia (Equipo linuxitOS).
+- **Reproducibilidad:** Este archivo asegura el rigor metodológico del Módulo A. Se genera de manera automatizada y secuencial ejecutando los scripts de limpieza y cruce ubicados en la carpeta `scripts/` (tales como `scripts/merge_shcp.py` y `scripts/merge_conagua.py`). Esto garantiza la trazabilidad total desde las fuentes primarias oficiales hasta el cruce final sin manipulación manual.
+- **Fecha de última actualización:** 03 de abril de 2026.
 - **Licencia:** CC BY-SA 4.0 (Licencia general de este repositorio).

@@ -1,0 +1,21 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "HackODS 2026: linuxitOS"
+  navbar:
+    background: primary
+    left:
+      - text: "Equipo linuxitOS"
+        href: https://github.com/itsebasvz/linuxitOS-HackODS2026
+
+format:
+  dashboard:
+    theme: 
+      - lux
+      - styles.css
+    logo: https://hackods.unam.mx/wp-content/uploads/2025/01/logo_hackods_2026.png
+    nav-buttons:
+      - icon: github
+        href: https://github.com/itsebasvz/linuxitOS-HackODS2026

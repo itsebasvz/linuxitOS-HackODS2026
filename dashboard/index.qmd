@@ -1,0 +1,366 @@
+---
+title: "Agua y Pobreza: La Trampa Rural"
+subtitle: "Cruce ODS 1 (Fin de la Pobreza) y ODS 6 (Agua Limpia y Saneamiento)"
+author: "Equipo linuxitOS - HackODS UNAM 2026"
+format: dashboard
+---
+
+```{python}
+#| include: false
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+import os
+
+# Configurar renderer de Plotly para compatibilidad con Quarto
+# Documentación: https://quarto.org/docs/interactive/widgets/jupyter.html#plotly
+pio.renderers.default = "plotly_mimetype+notebook_connected"
+
+# Cargar dataset maestro
+data_path = os.path.join("..", "datos", "final_merged_data.csv")
+df = pd.read_csv(data_path, dtype={'CVEGEO': str})
+
+# Configuración de colores consistente con el CSS
+COLOR_RURAL = '#e74c3c'
+COLOR_URBANO = '#3498db'
+```
+
+# La Ilusión Nacional
+
+## Row {height=25%}
+
+```{python}
+#| component: valuebox
+#| title: "Población con Agua (Reporte Oficial SIODS 6.1.1.a)"
+dict(
+  icon = "droplet-fill",
+  color = "primary",
+  value = "64%"
+)
+```
+
+```{python}
+#| component: valuebox
+#| title: "Nivel de Detalle Máximo (SIODS)"
+dict(
+  icon = "map",
+  color = "secondary",
+  value = "Estatal"
+)
+```
+
+```{python}
+#| component: valuebox
+#| title: "Municipios Analizados (INEGI + CONEVAL)"
+dict(
+  icon = "geo-alt-fill",
+  color = "success",
+  value = "2,469"
+)
+```
+
+## Row {height=75%}
+
+### Column
+
+::: {.card}
+#### El Punto Ciego del Reporte Oficial
+
+**[INSERTA TU NARRATIVA AQUÍ - Sección 1: La Ilusión]**
+
+El Estado Mexicano reporta a la ONU que aproximadamente el 64% de la población cuenta con agua potable gestionada de forma segura (Indicador 6.1.1.a del SIODS). Sin embargo, el máximo nivel de desagregación de estos datos oficiales llega únicamente hasta la **Entidad Federativa** (estado).
+
+Esta limitación crea un **"Punto Ciego Estatal"**: cuando se promedian los datos a nivel estatal, la pobreza extrema de comunidades rurales aisladas queda diluida al mezclarse con la infraestructura urbana de las capitales estatales.
+
+Para responder a nuestra pregunta central sobre las diferencias entre zonas rurales y urbanas, fue necesario profundizar en los microdatos del INEGI y CONEVAL a nivel municipal.
+
+::: {.column-margin}
+**Nota metodológica:** Los datos del Sistema de Información de los Objetivos de Desarrollo Sostenible (SIODS) fueron extraídos mediante su API oficial en abril de 2026.
+:::
+
+:::
+
+# La Realidad Demográfica
+
+## Row
+
+### Column {width=40%}
+
+::: {.card}
+#### La Dispersión Geográfica como Barrera
+
+**[INSERTA TU NARRATIVA AQUÍ - Sección 2: La Dispersión]**
+
+El Censo de Población y Vivienda 2020 del INEGI revela un dato crucial: aunque solo el 21.6% de los mexicanos vive en localidades rurales (menos de 2,500 habitantes), **más del 55% de los municipios del país** son predominantemente rurales.
+
+Esta inmensa dispersión geográfica representa el verdadero obstáculo logístico para la implementación de infraestructura hídrica del ODS 6. Llevar agua potable y saneamiento a 1,360 municipios dispersos requiere inversiones exponencialmente mayores que atender a los 1,109 municipios urbanos concentrados.
+
+::: {.column-margin}
+**Clasificación:** Un municipio se considera "Rural" si más del 50% de su población vive en localidades con menos de 2,500 habitantes (definición oficial INEGI).
+:::
+
+:::
+
+### Column {width=60%}
+
+```{python}
+#| title: "Distribución de Municipios en México por Clasificación"
+
+# Contar municipios por clasificación
+municipios_count = df['clasificacion_rural'].value_counts().reset_index()
+municipios_count.columns = ['Clasificación', 'Número de Municipios']
+
+# Crear gráfico de pastel
+fig = px.pie(
+    municipios_count, 
+    values='Número de Municipios', 
+    names='Clasificación',
+    color='Clasificación',
+    color_discrete_map={'Urbano': COLOR_URBANO, 'Rural': COLOR_RURAL},
+    hole=0.4,
+    title="55% de los municipios son predominantemente rurales"
+)
+
+# Suprimir auto-display de expresiones intermedias
+_ = fig.update_traces(
+    textposition='inside',
+    textinfo='percent+label',
+    hovertemplate='<b>%{label}</b><br>Municipios: %{value}<br>Porcentaje: %{percent}<extra></extra>'
+)
+
+_ = fig.update_layout(
+    font=dict(family="Inter, sans-serif", size=14),
+    showlegend=True,
+    height=500
+)
+
+fig
+```
+
+# La Trampa de Infraestructura
+
+## Row {height=100%}
+
+### Column {width=70%}
+
+```{python}
+#| title: "Déficit de Agua vs Pobreza Extrema (2,469 Municipios)"
+
+# Scatter plot limpio usando Plotly Express
+fig_scatter = px.scatter(
+    df,
+    x='carencia_agua_conagua_pct',
+    y='Pobreza_extrema_pct',
+    color='clasificacion_rural',
+    hover_name='Municipio',
+    hover_data=['RHA', 'poblacion_total'],
+    color_discrete_map={'Urbano': COLOR_URBANO, 'Rural': COLOR_RURAL},
+    labels={
+        'carencia_agua_conagua_pct': '% Sin Agua Entubada (CONAGUA)',
+        'Pobreza_extrema_pct': '% Pobreza Extrema (CONEVAL)',
+        'RHA': 'Cuenca',
+        'poblacion_total': 'Población'
+    },
+    opacity=0.7
+)
+
+# Calcular promedios para líneas de referencia
+prom_agua_rural = df[df['clasificacion_rural'] == 'Rural']['carencia_agua_conagua_pct'].mean()
+prom_agua_urbano = df[df['clasificacion_rural'] == 'Urbano']['carencia_agua_conagua_pct'].mean()
+
+# Agregar líneas de referencia usando shapes (método seguro)
+_ = fig_scatter.update_layout(
+    xaxis_title="% Sin Agua Entubada (CONAGUA)",
+    yaxis_title="% en Pobreza Extrema (CONEVAL)",
+    font=dict(family="Inter, sans-serif", size=12),
+    legend=dict(title="Tipo de Municipio", orientation="h", yanchor="bottom", y=-0.2),
+    height=450,
+    shapes=[
+        dict(type='line', x0=prom_agua_rural, x1=prom_agua_rural, y0=0, y1=1, yref='paper',
+             line=dict(color=COLOR_RURAL, width=2, dash='dash')),
+        dict(type='line', x0=prom_agua_urbano, x1=prom_agua_urbano, y0=0, y1=1, yref='paper',
+             line=dict(color=COLOR_URBANO, width=2, dash='dash'))
+    ],
+    annotations=[
+        dict(x=prom_agua_rural, y=0.98, yref='paper', text=f"Rural: {prom_agua_rural:.1f}%",
+             showarrow=False, font=dict(color=COLOR_RURAL, size=10)),
+        dict(x=prom_agua_urbano, y=0.02, yref='paper', text=f"Urbano: {prom_agua_urbano:.1f}%",
+             showarrow=False, font=dict(color=COLOR_URBANO, size=10))
+    ]
+)
+
+fig_scatter
+```
+
+### Column {width=30%}
+
+```{python}
+#| title: "Comparativa de Promedios"
+
+# Preparar datos para gráfica de barras
+comparativa_data = pd.DataFrame({
+    'Tipo': ['Rural', 'Urbano', 'Rural', 'Urbano'],
+    'Indicador': ['Sin Agua', 'Sin Agua', 'Pobreza Extrema', 'Pobreza Extrema'],
+    'Porcentaje': [
+        df[df['clasificacion_rural'] == 'Rural']['carencia_agua_conagua_pct'].mean(),
+        df[df['clasificacion_rural'] == 'Urbano']['carencia_agua_conagua_pct'].mean(),
+        df[df['clasificacion_rural'] == 'Rural']['Pobreza_extrema_pct'].mean(),
+        df[df['clasificacion_rural'] == 'Urbano']['Pobreza_extrema_pct'].mean()
+    ]
+})
+
+fig_barras = px.bar(
+    comparativa_data,
+    x='Indicador',
+    y='Porcentaje',
+    color='Tipo',
+    barmode='group',
+    color_discrete_map={'Urbano': COLOR_URBANO, 'Rural': COLOR_RURAL},
+    text_auto='.1f'
+)
+
+_ = fig_barras.update_layout(
+    yaxis_title="Porcentaje (%)",
+    xaxis_title="",
+    font=dict(family="Inter, sans-serif", size=11),
+    legend=dict(title=""),
+    height=450,
+    showlegend=True
+)
+
+_ = fig_barras.update_traces(texttemplate='%{text}%', textposition='outside')
+
+fig_barras
+```
+
+## Row {height=40%}
+
+### Column {width=50%}
+
+```{python}
+#| title: "Déficit Hídrico por Cuenca Hidrológica (RHA)"
+
+# Agregar datos geográficos por RHA (simulación simplificada)
+rha_stats = df.groupby('RHA').agg({
+    'carencia_agua_conagua_pct': 'mean',
+    'Municipio': 'count'
+}).reset_index()
+rha_stats.columns = ['RHA', 'Carencia_Agua_Promedio', 'Num_Municipios']
+
+fig_rha = px.bar(
+    rha_stats.sort_values('Carencia_Agua_Promedio', ascending=False),
+    x='Carencia_Agua_Promedio',
+    y='RHA',
+    orientation='h',
+    color='Carencia_Agua_Promedio',
+    color_continuous_scale='Reds',
+    labels={
+        'Carencia_Agua_Promedio': '% Promedio Sin Agua',
+        'RHA': 'Región Hidrológica'
+    },
+    hover_data=['Num_Municipios']
+)
+
+_ = fig_rha.update_layout(
+    font=dict(family="Inter, sans-serif", size=10),
+    height=400,
+    yaxis={'categoryorder':'total ascending'},
+    showlegend=False
+)
+
+fig_rha
+```
+
+### Column {width=50%}
+
+::: {.card}
+#### La Comprobación Matemática
+
+**[INSERTA TU NARRATIVA AQUÍ - Sección 3: El Impacto]**
+
+Al cruzar los datos del Censo INEGI 2020 con los datos específicos de agua de CONAGUA y pobreza de CONEVAL, la "Ilusión Nacional" queda completamente desmentida.
+
+Los gráficos revelan con claridad cómo los municipios rurales sufren una **doble trampa estructural**: mayor carencia de agua entubada y mayor pobreza extrema.
+
+**Los números son irrefutables:**
+
+| Tipo de Municipio | Promedio Sin Agua | Promedio Pobreza Extrema |
+|-------------------|-------------------|--------------------------|
+| **Urbano** (1,109 municipios) | 2.1% | 11.8% |
+| **Rural** (1,360 municipios) | **9.6%** | **21.6%** |
+
+**La carencia de agua entubada es 4.6 VECES MAYOR en el México rural, y la pobreza extrema el doble.** El análisis por cuencas hidrológicas (RHA) demuestra que esta crisis no respeta fronteras estatales: son los sistemas hídricos naturales los que determinan el acceso al agua.
+
+El déficit hídrico no es solo una cuestión de tuberías faltantes; es una **trampa estructural** que perpetúa la pobreza multidimensional en las zonas rurales del país.
+
+:::
+
+# Contrastes de Recaudación
+
+## Row
+
+### Column
+
+::: {.card}
+#### Anomalías Financieras en la Gestión del Agua
+
+**[INSERTA TU NARRATIVA AQUÍ - Sección 4: Las Anomalías]**
+
+Al integrar los datos de la Secretaría de Hacienda y Crédito Público (SHCP) sobre derechos de agua municipales, emerge un patrón que merece análisis profundo.
+
+La siguiente tabla presenta a los únicos **10 municipios en México donde a más del 50% de su población les falta agua entubada** (según CONAGUA), pero que simultáneamente reportan millones de pesos de ingresos formales por derechos de agua y tomas registradas ante la SHCP.
+
+Los datos están presentados sin interpretaciones, permitiendo que cada observador saque sus propias conclusiones sobre las posibles causas de estas discrepancias (ej. cobro de pipas registrado como derecho, monopolio en las cabeceras municipales, o errores contables).
+
+::: {.column-margin}
+**Fuente de datos:** Secretaría de Hacienda y Crédito Público (SHCP), Derechos de Agua Municipal 2020.
+:::
+
+:::
+
+## Row
+
+```{python}
+#| title: "Municipios con >50% Falta de Agua pero con Recaudación por Agua (2020)"
+
+# Filtrar municipios con alta carencia pero con recaudación positiva
+anomalias = df[(df['carencia_agua_conagua_pct'] >= 50.0) & (df['monto_agua'] > 0)].copy()
+
+# Seleccionar columnas relevantes
+anomalias_display = anomalias[[
+    'Municipio', 
+    'carencia_agua_conagua_pct', 
+    'Pobreza_extrema_pct',
+    'monto_agua', 
+    'tomas_pagadas',
+    'monto_recaudado_percapita'
+]].copy()
+
+# Renombrar columnas para mejor presentación
+anomalias_display.columns = [
+    'Municipio',
+    '% Sin Agua Entubada',
+    '% Pobreza Extrema',
+    'Ingreso Total por Agua (MXN)',
+    'Tomas Pagadas',
+    'Recaudación Per Cápita (MXN)'
+]
+
+# Ordenar por monto de agua (descendente)
+anomalias_display = anomalias_display.sort_values('Ingreso Total por Agua (MXN)', ascending=False)
+
+# Formatear números
+anomalias_display['Ingreso Total por Agua (MXN)'] = anomalias_display['Ingreso Total por Agua (MXN)'].apply(lambda x: f'${x:,.0f}')
+anomalias_display['Tomas Pagadas'] = anomalias_display['Tomas Pagadas'].apply(lambda x: f'{int(x):,}')
+anomalias_display['Recaudación Per Cápita (MXN)'] = anomalias_display['Recaudación Per Cápita (MXN)'].apply(lambda x: f'${x:,.0f}')
+anomalias_display['% Sin Agua Entubada'] = anomalias_display['% Sin Agua Entubada'].apply(lambda x: f'{x:.1f}%')
+anomalias_display['% Pobreza Extrema'] = anomalias_display['% Pobreza Extrema'].apply(lambda x: f'{x:.1f}%')
+
+# Mostrar tabla con formato
+anomalias_display
+```
+
+::: {.column-margin}
+**Total de casos identificados:** Los 10 únicos municipios que presentan esta característica extrema en el año 2020 a nivel nacional, superando los $22 MDP en conjunto.
+:::

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-file_path = "datos/iter_00_cpv2020_csv/iter_00_cpv2020/conjunto_de_datos/conjunto_de_datos_iter_00CSV20.csv"
+file_path = "datos/conjunto_de_datos_iter_00CSV20.csv"
 
 print("Cargando datos del Censo 2020 (ITER)...")
 df = pd.read_csv(file_path, usecols=['ENTIDAD', 'MUN', 'LOC', 'NOM_LOC', 'POBTOT'], dtype=str)

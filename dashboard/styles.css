@@ -1,0 +1,103 @@
+/*-- scss:rules --*/
+
+/* Importar fuentes de Google Fonts (permitido en CSS) */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+/* Tipografía personalizada */
+h1, h2, h3, .h1, .h2, .h3 {
+  font-family: 'Merriweather', serif;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+body, p, .card-body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #2c3e50;
+}
+
+/* Paleta de colores alineada con las visualizaciones */
+:root {
+  --color-rural: #e74c3c;      /* Rojo terracota para zonas rurales */
+  --color-urbano: #3498db;     /* Azul profundo para zonas urbanas */
+  --color-accent: #f39c12;     /* Naranja para destacados */
+  --color-dark: #2c3e50;       /* Texto principal */
+  --color-light-bg: #ecf0f1;   /* Fondo claro */
+}
+
+/* Estilo para los value boxes */
+.valuebox {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Estilo para las tarjetas (cards) */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border: none;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* Estilo para callouts en márgenes */
+.column-margin {
+  font-size: 0.9em;
+  color: #7f8c8d;
+  font-style: italic;
+  border-left: 3px solid var(--color-accent);
+  padding-left: 12px;
+}
+
+/* Títulos de las páginas */
+.dashboard-page-title {
+  font-size: 2.2em;
+  margin-bottom: 0.5em;
+  color: var(--color-dark);
+  border-bottom: 3px solid var(--color-accent);
+  padding-bottom: 0.3em;
+}
+
+/* Estilo para tablas interactivas */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.95em;
+}
+
+table thead th {
+  background-color: var(--color-dark);
+  color: white;
+  font-weight: 600;
+  padding: 12px 8px;
+  text-align: left;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+table tbody td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Responsividad mejorada */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8em;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+}

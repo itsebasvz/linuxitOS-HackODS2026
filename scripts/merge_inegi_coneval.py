@@ -4,7 +4,7 @@ import os
 
 def procesar_inegi():
     print("1. Procesando Censo INEGI 2020 (ITER) para calcular ruralidad municipal...")
-    file_path = "../datos/iter_00_cpv2020_csv/iter_00_cpv2020/conjunto_de_datos/conjunto_de_datos_iter_00CSV20.csv"
+    file_path = "../datos/conjunto_de_datos_iter_00CSV20.csv.gz"
     
     # Leemos solo las columnas necesarias para ahorrar memoria
     df = pd.read_csv(file_path, usecols=['ENTIDAD', 'NOM_ENT', 'MUN', 'LOC', 'POBTOT'], dtype=str)

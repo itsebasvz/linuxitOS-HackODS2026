@@ -33,19 +33,17 @@ El cruce entre el *ODS 1 (Fin de la Pobreza)* y el *ODS 6 (Agua Limpia y Saneami
 
 Nuestra premisa fundamental, respaldada por la ONU: **la pobreza va más allá de la falta de ingresos; es la carencia de los servicios básicos que permiten una vida digna.** 
 
-Quien carece de agua, está encadenado a la pobreza extrema.
-
 ***
 
 ### La Ilusión Nacional
 
 El Estado Mexicano reporta a la comunidad internacional que aproximadamente el [64% de la población cuenta con agua potable gestionada de forma segura para el año 2020 (SIODS)](https://agenda2030.mx/ODSind.html?ind=ODS006000050010&cveind=54&cveCob=99&lang=es#/Indicator){target="_blank"}. Sin embargo, cuando observamos los datos a nivel municipal, la estadística a gran escala se convierte en un **espejismo**.
 
-La sólida infraestructura de las zonas altamente urbanizadas "promedia hacia arriba", borrando estadísticamente a las comunidades rurales y periféricas. 
+La sólida infraestructura de las zonas altamente urbanizadas "promedia hacia arriba", borrando estadísticamente a las comunidades rurales y periféricas. Véase en la gráfica "Promedio Oficial vs Realidad Municipal".
 
 > *"Cuando se discrimina o se ocultan los datos a gran escala, se invisibiliza la carencia y se violan derechos humanos fundamentales."*
 
-Para encontrar la verdad, rompimos la ilusión oficial y profundizamos en los **microdatos de 2,469 municipios**.
+Para encontrar la verdad profundizamos en los **microdatos de 2,469 municipios** de la República Mexicana.
 
 ::: {.callout-note appearance="simple" icon=false}
 **Nota metodológica:** Los datos de la gráfica adyacente provienen de cruzar los microdatos del Censo de Población y Vivienda (INEGI, 2020) para la clasificación sociodemográfica (Rural/Urbana), con los indicadores municipales de cobertura hídrica de la CONAGUA.
@@ -88,7 +86,7 @@ dict(
 ### Row {height=80%}
 
 ```{python}
-#| title: "El Espejismo Numérico: Promedio Oficial vs Realidad Municipal"
+#| title: "Promedio Oficial vs Realidad Municipal"
 
 # Generar histograma de Carencia de Agua
 fig_espejismo = px.histogram(
@@ -164,13 +162,13 @@ La lejanía se convierte en un castigo: las políticas públicas priorizan el vo
 > **Dilema Central:** ¿Rentabilidad Política o Equidad Social?
 
 ::: {.callout-note appearance="simple" icon=false}
-**Nota metodológica:** La clasificación de "Municipio Rural" se asigna si más del 50% de su población vive en localidades que no superan el umbral de los 2,500 habitantes (INEGI, Censo 2020).
+**Nota metodológica:** La clasificación de "Municipio Rural" se asigna si más del 50% de su población vive en localidades con menos de 2,500 habitantes, según el INEGI (Censo 2020).
 :::
 
 ## Column {width=25%}
 
 ```{python}
-#| title: "Distribución de Municipios (55% Rurales)"
+#| title: "Distribución de Municipios"
 
 # Contar municipios por clasificación
 municipios_count = df['clasificacion_rural'].value_counts().reset_index()
@@ -216,7 +214,7 @@ fig
 ## Column {width=45%}
 
 ```{python}
-#| title: "Foco Demográfico: Municipios con Mayor Rezago de Infraestructura"
+#| title: "Municipios con Mayor Rezago de Infraestructura"
 
 from itables import show
 
@@ -268,12 +266,12 @@ show(
 México se visualiza como un país con un camino firme al desarrollo. Sin embargo, detrás de los promedios nacionales o incluso estatales se esconde una factura profunda. **Se invisibilizan a los municipios que más carecen del recurso del agua potable.**
 
 Los datos de CONEVAL y CONAGUA no mienten, existe una correlación entre la causa de la pobreza con la falta del agua.
-La falta de infraestructura no es solo un problema técnico; es un ladrón de tiempo. **El tiempo que mujeres y niñes dedican a acarrear agua es tiempo robado a la educación y al trabajo remunerado.**
+La falta de infraestructura no es solo un problema técnico; es un ladrón de tiempo. **El tiempo que mujeres y niños dedican a acarrear agua es tiempo robado a la educación y al trabajo remunerado.**
 
 Para entender por qué en la actualidad una llave de agua sigue siendo un privilegio, debemos elevar la mirada del municipio al sistema. Al pasar del dato municipal a la administración por cuencas, la correlación se vuelve veredicto: **La pobreza en México tiene una dirección postal olvidada por el presupuesto nacional.**
 
-Al agrupar los datos por Región Hidrológico-Administrativa (RHA), el desarrollo del país se desmorona . Sin importar la zona, sea el árido norte o el lluvioso sur, el abandono de las zonas rurales es una constante sistémica.
-**La intersección de los ODS 1 y 6 nos dicta una verdad incómoda: ninguna transferencia de efectivo ni programa social erradicará la pobreza si no hay una llave de agua potable en casa.** La infraestructura hídrica no es solo ingeniería; es el pilar más básico de la justicia social.
+Al agrupar los datos por Región Hidrológico-Administrativa (RHA), el desarrollo del país se desmorona. Sin importar la zona, sea el árido norte o el lluvioso sur, el abandono de las zonas rurales es una constante sistémica.
+**La intersección de los ODS 1 y 6 nos dicta una verdad incómoda: ningún apoyo económico ni programa social erradicará la pobreza si no hay una llave de agua potable en casa.** La infraestructura hídrica no es solo ingeniería; es el pilar más básico de la justicia social.
 
 **Justicia social es infraestructura. El agua es un derecho.**
 
@@ -428,7 +426,7 @@ Al agrupar los datos y cruzar el Censo INEGI 2020 con la carencia de agua de CON
 | **Urbano** (1,109 municipios) | 2.1% | 11.8% |
 | **Rural** (1,360 municipios) | **9.6%** | **21.6%** |
 
-**La carencia de agua entubada es 4.6 VECES MAYOR en el México rural, y la pobreza extrema el doble.** Ninguna transferencia de efectivo erradicará la pobreza si no hay una llave de agua en casa. Visibilizar esta trampa es el primer paso para exigir políticas públicas que dejen de promediar y empiecen a focalizar.
+**La carencia de agua entubada es 4.6 veces mayor en el México rural, y la pobreza extrema el doble.**Visibilizar esta trampa es el primer paso para exigir políticas públicas que dejen de promediar y empiecen a focalizar.
 :::
 
 # Acción Positiva

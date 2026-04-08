@@ -63,7 +63,22 @@ body, p, .card-body {
   padding-bottom: 0.3em;
 }
 
-/* Estilo para tablas interactivas */
+/* Espacio entre buscador y primera fila (DataTables/itables, robusto) */
+.dataTables_wrapper .dataTables_filter,
+.dt-container .dt-search {
+  margin-bottom: 0.75rem !important;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dt-container .dt-length {
+  margin-bottom: 0.75rem !important;
+}
+
+.dataTables_wrapper table.dataTable,
+.dt-container table.dataTable {
+  margin-top: 0.5rem !important;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
@@ -100,4 +115,5 @@ table tbody td {
   .card {
     margin-bottom: 1rem;
   }
+  
 }

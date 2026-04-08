@@ -219,18 +219,9 @@ fig
 #| title: "Foco Demográfico: Municipios con Mayor Rezago de Infraestructura"
 
 from itables import show
-import itables.options as opt
-
-# Activar opciones DataTables (sin wrap de texto, compacta)
-opt.classes = ["display", "nowrap", "compact"]
-opt.lengthMenu = [5, 10, 30]
-opt.pageLength = 5  # Mostrar 5 filas por defecto para no saturar el panel
-
-# Layout DOM 'tip': t(Table), i(Info), p(Pagination). Esto mueve el texto descriptivo DEBAJO de la tabla.
-opt.dom = "tip"
 
 # Localización al español (Estrictamente texto crudo para cumplir rúbrica de HackODS)
-opt.language = {
+language_top30 = {
     "info": "Mostrando _TOTAL_ municipios.",
     "paginate": {"next": "Sig \u2192", "previous": "\u2190 Ant"}
 }
@@ -256,7 +247,16 @@ df_top30['% Sin Agua'] = df_top30['% Sin Agua'].round(1)
 df_top30['% Pob. Extrema'] = df_top30['% Pob. Extrema'].round(1)
 
 # Renderizar tabla interactiva (oculta índice y buscador para máxima limpieza visual)
-show(df_top30, showIndex=False, searching=False)
+show(
+    df_top30,
+    showIndex=False,
+    searching=False,
+    classes=["display", "nowrap", "compact"],
+    lengthMenu=[5, 10, 30],
+    pageLength=5,
+    dom="tip",
+    language=language_top30,
+)
 ```
 
 # El mapa de la invisibilidad {.scrolling}
@@ -288,13 +288,13 @@ Al agrupar los datos por Región Hidrológico-Administrativa (RHA), el desarroll
 ```{python}
 #| component: valuebox
 #| title: "Población con acceso seguro al agua"
-dict(color="blue", value="65%", icon="water")
+dict(color="blue", value="64%", icon="water")
 ```
 
 ```{python}
 #| component: valuebox
 #| title: "Población sin acceso a agua potable"
-dict(color="danger", value="35%", icon="droplet-half")
+dict(color="danger", value="36%", icon="droplet-half")
 ```
 
 ### Row {height=600px}
@@ -414,7 +414,7 @@ _ = fig_scatter.update_layout(
 fig_scatter
 ```
 
-### Row {height=800px}
+### Row {height=550px}
 
 ::: {.card}
 #### La Comprobación Matemática (El Veredicto Final)
@@ -582,4 +582,106 @@ _ = fig_ongs.update_layout(
 )
 
 fig_ongs
+```
+
+# Explorador de Datos
+
+Consulta la base completa de 2,469 municipios para el analisis ODS 1 x ODS 6. En el [Repositorio de datos](https://github.com/linuxitOS-hackODS/linuxitOS-HackODS-UNAM/tree/main/datos) encontraras tambien las licencias y las fuentes oficiales: INEGI, SHCP, CONEVAL, CONAGUA y SIODS.
+
+```{python}
+#| title: "Base de Datos Completa: ODS 1 × ODS 6"
+
+from itables import show
+import pandas as pd
+
+# Localización profesional en español
+language_explorador = {
+    "search": "Buscar:",
+    "lengthMenu": "Mostrar _MENU_ registros",
+    "info": "Mostrando _START_ a _END_ de _TOTAL_ municipios",
+    "infoEmpty": "0 municipios",
+    "infoFiltered": "(filtrados de _MAX_ total)",
+    "paginate": {
+        "next": "Siguiente",
+        "previous": "Anterior",
+        "first": "Primero",
+        "last": "Último"
+    },
+    "zeroRecords": "No se encontraron coincidencias",
+    "emptyTable": "Sin datos disponibles",
+    "loadingRecords": "Cargando...",
+    "processing": "Procesando..."
+}
+
+# =============================================================================
+# PREPARACIÓN Y TRANSFORMACIÓN DE DATOS
+# =============================================================================
+
+# Selección de columnas con orden lógico:
+# 1. Identificación geográfica
+# 2. Información demográfica
+# 3. Indicadores ODS 1 (Pobreza)
+# 4. Indicadores ODS 6 (Agua)
+df_explorador = df[[
+    'CVEGEO',
+    'Estado',
+    'Municipio',
+    'poblacion_total',
+    'pct_rural',
+    'clasificacion_rural',
+    'Pobreza_pct',
+    'Pobreza_extrema_pct',
+    'Carencia_servicios_pct',
+    'cobertura_agua_conagua_pct',
+    'RHA'
+]].copy()
+
+# Renombrado profesional de columnas
+df_explorador.columns = [
+    'CVE GEO',
+    'Estado',
+    'Municipio',
+    'Población',
+    '% Población Rural',
+    'Clasificación',
+    '% Pobreza',
+    '% Pobreza Extrema',
+    '% Carencia Servicios',
+    '% Cobertura Agua',
+    'Región Hidrológica'
+]
+
+# Formateo de datos numéricos para presentación profesional
+# Reemplazar NaN antes de formatear para evitar "nan%"
+cols_pct = [
+    '% Población Rural',
+    '% Pobreza',
+    '% Pobreza Extrema',
+    '% Carencia Servicios',
+    '% Cobertura Agua'
+]
+df_explorador[cols_pct] = df_explorador[cols_pct].fillna(0)
+
+df_explorador['Población'] = df_explorador['Población'].apply(
+    lambda x: f"{int(x):,}".replace(",", " ") if pd.notna(x) else "N/D"
+)
+df_explorador['% Población Rural'] = df_explorador['% Población Rural'].map(lambda x: f"{x:.1f}%")
+df_explorador['% Pobreza'] = df_explorador['% Pobreza'].map(lambda x: f"{x:.2f}%")
+df_explorador['% Pobreza Extrema'] = df_explorador['% Pobreza Extrema'].map(lambda x: f"{x:.2f}%")
+df_explorador['% Carencia Servicios'] = df_explorador['% Carencia Servicios'].map(lambda x: f"{x:.2f}%")
+df_explorador['% Cobertura Agua'] = df_explorador['% Cobertura Agua'].map(lambda x: f"{x:.2f}%")
+
+# =============================================================================
+# RENDERIZADO DE TABLA INTERACTIVA
+# =============================================================================
+
+show(
+    df_explorador,
+    classes=["display", "cell-border", "stripe"],
+    lengthMenu=[25, 50, 100, 250],
+    pageLength=25,
+    dom="frtip",
+    order=[[0, "asc"]],
+    language=language_explorador,
+)
 ```

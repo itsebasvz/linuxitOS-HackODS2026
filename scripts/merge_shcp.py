@@ -8,13 +8,13 @@ def main():
     merged_path = os.path.join(base_dir, "datos", "final_merged_data.csv")
     shcp_path = os.path.join(base_dir, "datos", "derecho_agua_municipal.csv")
 
-    print("Cargando datasets...")
+    print("[INFO] Instanciando dataframes (Dataset Maestro y SHCP)...")
     # Leer dataset principal (manteniendo CVEGEO como string para no perder ceros a la izquierda)
     df_main = pd.read_csv(merged_path, dtype={"CVEGEO": str})
     # Leer dataset de SHCP
     df_shcp = pd.read_csv(shcp_path)
 
-    print("Procesando datos de SHCP (Año 2020)...")
+    print("[INFO] Limpiando base de derechos de agua SHCP (Corte: 2020)...")
     # Filtrar solo el ciclo 2020 para alinear temporalmente con INEGI y CONEVAL
     df_shcp_2020 = df_shcp[df_shcp["ciclo"] == 2020].copy()
 
@@ -36,7 +36,7 @@ def main():
     for col in ["monto_agua", "monto_recaudado_percapita", "tomas_pagadas"]:
         df_shcp_2020[col] = pd.to_numeric(df_shcp_2020[col], errors="coerce").fillna(0)
 
-    print("Realizando cruce maestro de datos...")
+    print("[INFO] Ejecutando operación Left Join con estructura base...")
     # Realizar un left join para mantener todos los municipios que ya teníamos,
     # y simplemente añadir la información de recaudación.
     df_final = pd.merge(df_main, df_shcp_2020, on="CVEGEO", how="left")
@@ -46,11 +46,11 @@ def main():
         df_final[col] = df_final[col].fillna(0)
 
     # Sobrescribir el dataset final
-    print(f"Guardando datos actualizados en {merged_path}...")
+    print(f"[INFO] Escribiendo matriz transaccional en {merged_path}...")
     df_final.to_csv(merged_path, index=False)
 
-    print(f"¡Proceso completado! Variables de recaudación agregadas.")
-    print(f"Muestra de las nuevas columnas para los primeros 5 registros:")
+    print(f"[ÉXITO] Dimensiones financieras integradas al espacio matricial.")
+    print(f"[INFO] Verificando cabeceras financieras (n=5):")
     print(df_final[["CVEGEO", "Municipio", "monto_agua", "tomas_pagadas"]].head())
 
 

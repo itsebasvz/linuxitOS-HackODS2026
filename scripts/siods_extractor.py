@@ -58,19 +58,19 @@ def extraer_siods(ind_config):
 
             return pd.DataFrame(resultados)
         else:
-            print(f"Error {response.status_code} al consultar {ind_config['nombre']}")
+            print(f"[ERROR] Código de estado {response.status_code} al consultar indicador {ind_config['nombre']}")
             return None
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"[ERROR] Excepción de conexión: {e}")
         return None
 
 
 def ejecutar_pipeline():
-    print("Iniciando extracción desde la API de SIODS (Agenda 2030)...")
+    print("[INFO] Iniciando extracción de datos desde API SIODS (Agenda 2030).")
 
     df_list = []
     for config in INDICADORES_SIODS:
-        print(f"Extrayendo: {config['nombre']}")
+        print(f"[INFO] Procesando indicador: {config['nombre']}")
         df = extraer_siods(config)
         if df is not None and not df.empty:
             df_list.append(df)
@@ -82,12 +82,13 @@ def ejecutar_pipeline():
         os.makedirs(os.path.dirname(ruta_salida), exist_ok=True)
         df_final.to_csv(ruta_salida, index=False)
 
-        print(f"\nExtracción exitosa. Guardado en {ruta_salida}")
-        print("\n--- Análisis de Granularidad (El Punto Ciego) ---")
+        print(f"\n[ÉXITO] Extracción finalizada. Dataset original guardado en: {ruta_salida}")
+        print("\n[INFO] --- Resumen Estadístico y Granularidad ---")
         entidades_unicas = df_final["Entidad"].unique()
-        print(f"Total de entidades geográficas extraídas: {len(entidades_unicas)}")
+        print(f"[INFO] Entidades geográficas únicas registradas: {len(entidades_unicas)}")
         print(
-            "La base contiene datos Nacionales y Estatales, confirmando la necesidad de pivotar a datos Municipales (CONEVAL) para evaluar zonas rurales."
+            "[INFO] Detalle: La matriz contiene inferencia a nivel Nacional y Estatal. "
+            "Requisito pivotar hacia CONEVAL para resolver déficit de datos a nivel municipal."
         )
 
 

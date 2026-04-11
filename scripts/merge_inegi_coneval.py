@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 def procesar_inegi():
-    print("1. Procesando Censo INEGI 2020 (ITER) para calcular ruralidad municipal...")
+    print("[INFO] 1. Agregando y calculando matriz de ruralidad municipal (Censo INEGI 2020)")
     file_path = "../datos/conjunto_de_datos_iter_00CSV20.csv.gz"
     
     # Leemos solo las columnas necesarias para ahorrar memoria
@@ -42,27 +42,27 @@ def merge_datos():
     inegi_df = procesar_inegi()
     
     coneval_path = "../datos/coneval_clean_2020.csv"
-    print(f"2. Cargando datos de pobreza municipal CONEVAL: {coneval_path}")
+    print(f"[INFO] 2. Incorporando vector de pobreza multidimensional CONEVAL: {coneval_path}")
     coneval_df = pd.read_csv(coneval_path, dtype={'CVEGEO': str})
     
     # Asegurar formato de clave a 5 dígitos
     inegi_df['CVEGEO'] = inegi_df['CVEGEO'].str.zfill(5)
     coneval_df['CVEGEO'] = coneval_df['CVEGEO'].str.zfill(5)
     
-    print("3. Ejecutando el Cruce de Datos (Merge)...")
+    print("[INFO] 3. Inicializando join relacional (Inner Merge) entre bases sociodemográficas...")
     # Inner merge para conservar solo los municipios que existen en ambas fuentes
     merged_df = pd.merge(coneval_df, inegi_df, on='CVEGEO', how='inner')
     
     out_path = "../datos/final_merged_data.csv"
     merged_df.to_csv(out_path, index=False)
     
-    print(f"\n¡CRUCE EXITOSO! Dataset maestro generado en: {out_path}")
-    print(f"Total de municipios cruzados: {len(merged_df)}")
+    print(f"\n[ÉXITO] Matriz transaccional generada en: {out_path}")
+    print(f"[INFO] Observaciones integradas: {len(merged_df)}")
     
-    print("\n--- Vista previa de los datos listos para el Dashboard ---")
+    print("\n[INFO] --- Vista Preliminar (Head) ---")
     print(merged_df.head().to_string())
     
-    print("\n--- Comprobación de Hipótesis (Promedios por Clasificación) ---")
+    print("\n[INFO] --- Agrupación Demográfica ---")
     resumen = merged_df.groupby('clasificacion_rural').agg(
         Carencia_Agua_Promedio=('Carencia_servicios_pct', 'mean'),
         Pobreza_Extrema_Promedio=('Pobreza_extrema_pct', 'mean'),

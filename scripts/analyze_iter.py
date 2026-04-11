@@ -3,7 +3,7 @@ import numpy as np
 
 file_path = "datos/conjunto_de_datos_iter_00CSV20.csv.gz"
 
-print("Cargando datos del Censo 2020 (ITER)...")
+print("[INFO] Cargando microdatos censales (ITER 2020)...")
 df = pd.read_csv(file_path, usecols=['ENTIDAD', 'MUN', 'LOC', 'NOM_LOC', 'POBTOT'], dtype=str)
 
 # Limpieza básica
@@ -35,11 +35,11 @@ agrupado['pct_rural'] = agrupado['pct_rural'].fillna(0)
 # Clasificar municipio (Rural si > 50% de su población vive en localidades rurales)
 agrupado['clasificacion'] = np.where(agrupado['pct_rural'] > 50, 'Rural', 'Urbano')
 
-print("\n--- Estadísticas Censo 2020 ---")
-print(f"Total de Municipios: {len(agrupado)}")
-print(f"Municipios predominantemente Rurales: {len(agrupado[agrupado['clasificacion'] == 'Rural'])}")
-print(f"Municipios predominantemente Urbanos: {len(agrupado[agrupado['clasificacion'] == 'Urbano'])}")
-print(f"Población Total (suma localidades): {agrupado['poblacion_total'].sum():,.0f}")
-print(f"Población Rural Nacional: {agrupado['poblacion_rural'].sum():,.0f}")
-print(f"Porcentaje de población rural nacional: {(agrupado['poblacion_rural'].sum() / agrupado['poblacion_total'].sum()) * 100:.2f}%")
+print("\n[INFO] --- Resumen Poblacional (Censo 2020) ---")
+print(f"[INFO] Municipios totales evaluados: {len(agrupado)}")
+print(f"[INFO] Entidades de vocación rural predominante: {len(agrupado[agrupado['clasificacion'] == 'Rural'])}")
+print(f"[INFO] Entidades de vocación urbana predominante: {len(agrupado[agrupado['clasificacion'] == 'Urbano'])}")
+print(f"[INFO] Universo poblacional censado: {agrupado['poblacion_total'].sum():,.0f}")
+print(f"[INFO] Población clasificada como rural: {agrupado['poblacion_rural'].sum():,.0f}")
+print(f"[INFO] Tasa global de ruralidad: {(agrupado['poblacion_rural'].sum() / agrupado['poblacion_total'].sum()) * 100:.2f}%")
 

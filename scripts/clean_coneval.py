@@ -2,7 +2,7 @@ import pandas as pd
 
 def process_coneval():
     file_path = "datos/Concentrado_indicadores_de_pobreza_2020.xlsx"
-    print(f"Leyendo archivo CONEVAL: {file_path}")
+    print(f"[INFO] Leyendo matriz CONEVAL: {file_path}")
     
     df = pd.read_excel(file_path, sheet_name="Concentrado municipal", header=None, skiprows=8)
     
@@ -24,10 +24,10 @@ def process_coneval():
     
     out_path = "datos/coneval_clean_2020.csv"
     df_clean.to_csv(out_path, index=False)
-    print(f"Datos de CONEVAL procesados y guardados en {out_path}")
+    print(f"[ÉXITO] Matriz CONEVAL sanitizada y almacenada en: {out_path}")
     
     # Estadísticas rápidas para el análisis
-    print("\n--- Resumen Estadístico CONEVAL ---")
+    print("\n[INFO] --- Resumen Descriptivo (CONEVAL) ---")
     print(df_clean.describe())
 
 if __name__ == "__main__":

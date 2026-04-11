@@ -51,16 +51,10 @@ source venv/bin/activate  # En sistemas Linux/Mac
 # 3. Descargar e instalar dependencias del core
 pip install -r requirements.txt
 
-# 4. Compilar Pipeline de Datos (Extracción, Limpieza y Cruce)
-python scripts/siods_extractor.py
-python scripts/analyze_iter.py
-python scripts/clean_coneval.py
-python scripts/merge_inegi_coneval.py
-python scripts/merge_shcp.py
-python scripts/merge_conagua.py
-python scripts/simplify_geojson.py
+# 4. Compilar Pipeline de Datos Automatizado (ETL)
+python main.py
 
-# 5. Procesar y visualizar el Dashboard Analítico (En vivo)
+# 5. Procesar e instanciar el Dashboard Analítico
 quarto preview dashboard/index.qmd
 ```
 

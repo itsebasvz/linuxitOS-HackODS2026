@@ -12,11 +12,9 @@ Decidimos usar IA exclusivamente para tareas mecánicas y de estructuración ini
 
 ### Tareas Documentadas:
 
-**05/04/2026 - Rediseño del Acto 4 ("Acción Positiva")**
-- **Tarea**: Layout de UI nativo en Quarto y script ETL/Plotly para mapa interactivo.
-- **Prompt usado**: "Necesito que reestructures completamente el acto 4... basarnos en la estetica de los actos previos... integrar logos de ONG... generar un mapa interactivo choropleth con Estado.csv y proyectos_agua.csv respetando la rúbrica."
-- **Resultado IA**: Se generó la sintaxis en Markdown de Quarto integrando imágenes y el código Python usando `pandas` y `plotly.express` para consolidar el dataset y visualizar el impacto por asociación con custom hover texts.
-- **Decisión Humana:** El equipo humano aportó el CSV validado con la información cualitativa, la narrativa social que contextualiza cada bloque y verificó la ausencia de directivas HTML no permitidas por los jueces.
+| Fecha | Herramienta | Tarea | Prompt / Detalle | Resultado y Modificación Humana |
+|---|---|---|---|---|
+| **2026-04-05** | OpenCode / Gemini | Rediseño del Acto 4 ("Acción Positiva") | "Necesito que reestructures completamente el acto 4... integrar logos de ONG... generar un mapa interactivo choropleth con Estado.csv y proyectos_agua.csv respetando la rúbrica." | **Resultado IA:** Generó sintaxis Quarto MD y código Python (pandas/plotly) para el mapa y hover texts.<br><br>**Aporte Humano:** El equipo aportó el CSV cualitativo validado, estructuró la narrativa social de validación cruzada y eliminó cualquier componente HTML no nativo de Quarto. |
 
 ---
 

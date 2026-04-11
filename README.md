@@ -44,9 +44,13 @@ git clone https://github.com/linuxitOS-hackODS/linuxitOS-HackODS-UNAM.git
 cd linuxitOS-HackODS-UNAM
 
 # 2. Crear y activar entorno virtual de Python
+# En Linux / macOS:
 python3 -m venv venv
-source venv/bin/activate  # En sistemas Linux/Mac
-# venv\Scripts\activate   # En sistemas Windows
+source venv/bin/activate
+
+# En Windows (Command Prompt / CMD):
+python -m venv venv
+venv\Scripts\activate.bat
 
 # 3. Descargar e instalar dependencias del core
 pip install -r requirements.txt

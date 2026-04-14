@@ -42,28 +42,32 @@ Este proyecto explora estas desigualdades mediante el cruce de microdatos, con e
 - **Python:** `>= 3.10`
 - **Quarto CLI:** `>= 1.4`
 
-### Comandos de Instalación y Pipeline ETL
-Ejecutar los siguientes comandos en terminal:
+### Estructura Narrativa y Evidencia Técnica
+En cumplimiento con el **Módulo D** de la rúbrica oficial, este repositorio integra una narrativa técnica que detalla la metodología de extracción, limpieza y procesamiento de datos.
+
+*   **Documentación del Pipeline:** La explicación detallada y el flujo lógico del proyecto se encuentran en la libreta [`notebooks/001_Pipeline_ETL_ODS.ipynb`](notebooks/001_Pipeline_ETL_ODS.ipynb).
+*   **Orquestación:** La libreta de Jupyter sirve como auditoría del script orquestador central (`main.py`), permitiendo una revisión transparente del cumplimiento técnico.
+
+---
+
+## 5. Guía de Reproducción y Auditoría
+
+Para replicar el entorno de desarrollo y verificar la integridad del pipeline, se utiliza el estándar `uv`.
+
+### Instrucciones de Ejecución (CLI)
+Ejecutar los siguientes comandos en la terminal desde la raíz del proyecto:
 
 ```bash
 # 1. Clonar el repositorio
 git clone https://github.com/linuxitOS-hackODS/linuxitOS-HackODS-UNAM.git
 cd linuxitOS-HackODS-UNAM
 
-# 2. Crear y activar entorno virtual de Python
-# En Linux / macOS:
-python3 -m venv venv
-source venv/bin/activate
+# 2. Sincronización del entorno virtual y empaquetado
+# El gestor `uv` (Rust) lee nuestro pyproject.toml y crea automáticamente el entorno.
+uv sync
 
-# En Windows (Command Prompt / CMD):
-python -m venv venv
-venv\Scripts\activate.bat
-
-# 3. Descargar e instalar dependencias del core
-pip install -r requirements.txt
-
-# 4. Compilar Pipeline de Datos Automatizado (ETL)
-python main.py
+# 3. Compilar Pipeline de Datos Automatizado (Orquestador ETL)
+uv run main.py
 
 # 5. Procesar e instanciar el Dashboard Analítico
 quarto preview dashboard/index.qmd

@@ -2,6 +2,10 @@
 title: "Agua y Pobreza: La Trampa Rural"
 subtitle: "Cruce ODS 1 (Fin de la Pobreza) y ODS 6 (Agua Limpia y Saneamiento)"
 format: dashboard
+listing:
+  id: ongs-directorio
+  contents: ../datos_ongs.yml
+  template: ../ongs.ejs
 ---
 
 ```{python}
@@ -605,22 +609,9 @@ fig_ongs
 
 ::: {.card}
 
-::: {.ong-logos}
-
-[![Fundación Gonzalo Río Arronte](img/fundacion.png)](https://fundaciongonzalorioarronte.org/){target="_blank"}
-
-[![CEMDA](img/cemda.png)](https://cemda.org.mx/){target="_blank"}
-
-[![Cántaro Azul](img/cantaroazul.jpg)](https://www.cantaroazul.org/){target="_blank"}
-
-::: {.ong-alianza}
-[![PNUD](img/pnud.png)](https://www.undp.org/es){target="_blank"}
-[![FEMSA](img/femsa.webp)](https://www.femsa.com/es/){target="_blank"}
-
-Alianza PNUD y FEMSA
+::: {#ongs-directorio}
 :::
 
-:::
 :::
 
 # Explorador de Datos

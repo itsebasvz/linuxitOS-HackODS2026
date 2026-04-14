@@ -6,7 +6,7 @@ website:
   search: false
   title: "HackODS UNAM 2026"
   navbar:
-    logo: hackodslogo.png
+    logo: img/hackodslogo.png
     background: primary
     left:
       - text: "Radiografía Nacional de Infraestructura Hídrica y Pobreza"

@@ -297,34 +297,96 @@ dict(color="danger", value="36%", icon="droplet-half")
 
 ### Row {height=600px}
 
+#### Column {width=50%}
+
 ```{python}
-#| title: "Disponibilidad Hídrica Nacional (757 Cuencas CONAGUA)"
+#| title: "Cobertura de Agua(%) por Estado"
+#| warning: false
+#| message: false
 import json
 
-# Forzar clvcuenca a string para que no pierda los ceros a la izquierda (ej. "0101")
-df_cuencas = pd.read_csv('../datos/Disponibilidad Cuencas_2020.csv', dtype={'clvcuenca': str})
+# 1. Cargar el Catálogo Nacional de Estados
+df_estados_mapa = pd.read_csv('../datos/Estado.csv', dtype={'clvedo': str})
 
-with open('../datos/Disponibilidad_Cuencas_2020_lite.json', 'r', encoding='utf-8') as f:
-    geojson_cuencas = json.load(f)
+# 2. Cargar los Datos de Cobertura
+df_cobertura = pd.read_excel('../datos/Población con acceso al agua en el año 2020.xlsx')
 
-# Mapa Coropleta de las Cuencas Hidrológicas
+# 3. Calcular métricas por estado
+df_50 = df_cobertura[df_cobertura['Población Cobertura(%)'] <= 50].groupby('Entidad').size().reset_index(name='Municipios <= 50%')
+df_70 = df_cobertura[(df_cobertura['Población Cobertura(%)'] > 50) & (df_cobertura['Población Cobertura(%)'] <= 70)].groupby('Entidad').size().reset_index(name='Municipios 50-70%')
+df_100 = df_cobertura[df_cobertura['Población Cobertura(%)'] > 70].groupby('Entidad').size().reset_index(name='Municipios > 70%')
+
+# Calcular promedios/sumatorias de población
+df_pob = df_cobertura.groupby('Entidad').agg({
+    'Población': 'sum',
+    'Población  con agua entubada en vivienda o predio': 'sum'
+}).reset_index()
+
+df_pob.rename(columns={
+    'Población': 'Pob_Total',
+    'Población  con agua entubada en vivienda o predio': 'Pob_Agua'
+}, inplace=True)
+
+# 4. Unir cálculos al DataFrame de estados
+df_estados_mapa = df_estados_mapa.merge(df_50, left_on='estado', right_on='Entidad', how='left').drop(columns=['Entidad'])
+df_estados_mapa = df_estados_mapa.merge(df_70, left_on='estado', right_on='Entidad', how='left').drop(columns=['Entidad'])
+df_estados_mapa = df_estados_mapa.merge(df_100, left_on='estado', right_on='Entidad', how='left').drop(columns=['Entidad'])
+df_estados_mapa = df_estados_mapa.merge(df_pob, left_on='estado', right_on='Entidad', how='left').drop(columns=['Entidad'])
+
+for col in ['Municipios <= 50%', 'Municipios 50-70%', 'Municipios > 70%']:
+    df_estados_mapa[col] = df_estados_mapa[col].fillna(0).astype(int)
+
+# Formatear la población con separador de miles
+df_estados_mapa['Pob_Total_Fmt'] = df_estados_mapa['Pob_Total'].fillna(0).apply(lambda x: f"{int(x):,}")
+df_estados_mapa['Pob_Agua_Fmt'] = df_estados_mapa['Pob_Agua'].fillna(0).apply(lambda x: f"{int(x):,}")
+
+# 5. Asignar Categorías de Riesgo
+def clasificar_vulnerabilidad(cantidad):
+    if cantidad == 0:
+        return 'Óptimo o Sin Registro Crítico (0)'
+    elif 1 <= cantidad <= 3:
+        return 'Alerta Moderada (1 a 3)'
+    else:
+        return 'Atención Prioritaria (4+)'
+
+df_estados_mapa['Categoría'] = df_estados_mapa['Municipios <= 50%'].apply(clasificar_vulnerabilidad)
+
+# 6. Cargar GeoJSON de Estados
+with open('../datos/Estado_lite.json', 'r', encoding='utf-8') as f:
+    geojson_estados = json.load(f)
+
+# Colores en tonos azules
+color_map_azules = {
+    'Óptimo o Sin Registro Crítico (0)': '#d4e6f1',
+    'Alerta Moderada (1 a 3)': '#3498db',
+    'Atención Prioritaria (4+)': '#154360'
+}
+
+# 7. Renderizar Mapa Choropleth
 fig_map = px.choropleth(
-    df_cuencas,
-    geojson=geojson_cuencas,
-    locations='clvcuenca',
-    featureidkey='properties.clvcuenca',
-    color='clasificacion',
-    hover_name='cuenca',
-    hover_data={'clvrha': True, 'clvrh': True, 'clvcuenca': False},
-    color_discrete_map={
-        'Con disponibilidad': 'rgba(52, 152, 219, 0.7)', 
-        'Sin disponibilidad': 'rgba(231, 76, 60, 0.8)'
-    },
-    labels={
-        'clasificacion': 'Estado Hídrico',
-        'clvrha': 'Región (RHA)',
-        'clvrh': 'Clave RH'
-    }
+    df_estados_mapa,
+    geojson=geojson_estados,
+    locations='clvedo',
+    featureidkey='properties.clvedo', 
+    color='Categoría',
+    category_orders={'Categoría': ['Óptimo o Sin Registro Crítico (0)', 'Alerta Moderada (1 a 3)', 'Atención Prioritaria (4+)']},
+    color_discrete_map=color_map_azules,
+    hover_name='estado',
+    custom_data=['Categoría', 'Municipios <= 50%', 'Municipios 50-70%', 'Municipios > 70%', 'Pob_Total_Fmt', 'Pob_Agua_Fmt']
+)
+
+_ = fig_map.update_traces(
+    hovertemplate="<b>%{hovertext}</b><br><br>" +
+    "Estado de Rezago: %{customdata[0]}<br><br>" +
+    "Población Total: <b>%{customdata[4]}</b><br>" +
+    "Pob. con Agua Entubada: <b>%{customdata[5]}</b><br><br>" +
+    "Municipios con Cobertura:<br>" +
+    "• ≤ 50%: <b>%{customdata[1]}</b><br>" +
+    "• 50-70%: <b>%{customdata[2]}</b><br>" +
+    "• > 70%: <b>%{customdata[3]}</b>" +
+    "<extra></extra>",
+    marker_line_color='#000000',
+    marker_line_width=0.6
 )
 
 _ = fig_map.update_geos(fitbounds="locations", visible=False)
@@ -338,23 +400,77 @@ _ = fig_map.update_layout(
         y=0.0,
         xanchor="left",
         x=0.0,
-        entrywidth=170,
+        entrywidth=250,
         bgcolor="rgba(255, 255, 255, 0.8)"
     ),
-    dragmode=False # Desactivar zoom pesado en un json tan grande
+    dragmode=False
 )
 
-# Hover tooltip color = color de cada categoría
-hover_colors_cuencas = {
-    'Con disponibilidad': 'rgba(52, 152, 219, 0.9)',
-    'Sin disponibilidad': 'rgba(231, 76, 60, 0.9)'
+# Hover tooltip color
+hover_colors_azules = {
+    'Óptimo o Sin Registro Crítico (0)': '#85c1e9',
+    'Alerta Moderada (1 a 3)': '#2874a6',
+    'Atención Prioritaria (4+)': '#154360'
 }
 for trace in fig_map.data:
     cat = trace.name
-    if cat in hover_colors_cuencas:
-        trace.hoverlabel = dict(bgcolor=hover_colors_cuencas[cat], font_color='white')
+    if cat in hover_colors_azules:
+        trace.hoverlabel = dict(bgcolor=hover_colors_azules[cat], font_color='white')
 
 fig_map
+```
+
+#### Column {width=50%}
+
+```{python}
+#| title: "Detalle Municipal con acceso al agua"
+from itables import show
+
+# 1. Seleccionamos datos e instanciamos copia
+df_detalle = df_cobertura[[
+    'Entidad', 
+    'Municipio', 
+    'Población', 
+    'Población Rural', 
+    'Población Urbana', 
+    'Población  con agua entubada en vivienda o predio'
+]].copy()
+
+# 2. Orden Alfabético Ascendente (Estado y después Municipio)
+df_detalle = df_detalle.sort_values(by=['Entidad', 'Municipio'], ascending=[True, True])
+
+# 3. Renombrar para mayor legibilidad UI
+df_detalle.columns = [
+    'Estado', 'Municipio', 'Pobl. Total', 'Pobl. Rural', 'Pobl. Urbana', 'Pobl. con Agua'
+]
+
+# 4. Formato numérico seguro (sin NaN que rompan el sort de itables)
+columnas_numericas = ['Pobl. Total', 'Pobl. Rural', 'Pobl. Urbana', 'Pobl. con Agua']
+for col in columnas_numericas:
+    df_detalle[col] = df_detalle[col].fillna(0).astype(int)
+
+# Localización al español (Estrictamente texto crudo para cumplir rúbrica de HackODS)
+language_detalle = {
+    "search": "Buscar:",
+    "info": "Mostrando _TOTAL_ municipios.",
+    "infoEmpty": "0 municipios",
+    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+    "zeroRecords": "No se encontraron coincidencias",
+    "emptyTable": "Sin datos disponibles",
+    "paginate": {"next": "Sig \u2192", "previous": "\u2190 Ant"}
+}
+
+# 5. Renderizar tabla interactiva
+show(
+    df_detalle,
+    showIndex=False,
+    searching=True,
+    classes=["display", "nowrap", "compact"],
+    lengthMenu=[10, 25, 50],
+    pageLength=14,
+    dom="ftip",
+    language=language_detalle,
+)
 ```
 
 ### Row {height=800px}

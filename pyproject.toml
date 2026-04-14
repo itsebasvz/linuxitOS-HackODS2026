@@ -1,0 +1,16 @@
+[project]
+name = "linuxitOS-HackODS-UNAM"
+version = "1.0.0"
+description = "Dashboard interactivo para HackODS 2026 sobre infraestructura hídrica y pobreza extrema en México."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.0.0",
+    "geopandas>=0.14.0",
+    "plotly>=5.18.0",
+    "nbformat>=5.9.2",
+    "itables>=1.6.3",
+]
+
+[tool.uv]
+package = false

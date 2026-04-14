@@ -1,0 +1,24 @@
+- title: "Fundación Gonzalo Río Arronte"
+  image: "img/fundacion.png"
+  url: "https://fundaciongonzalorioarronte.org/"
+  alianza: false
+
+- title: "CEMDA"
+  image: "img/cemda.png"
+  url: "https://cemda.org.mx/"
+  alianza: false
+
+- title: "Cántaro Azul"
+  image: "img/cantaroazul.jpg"
+  url: "https://www.cantaroazul.org/"
+  alianza: false
+
+- title: "PNUD"
+  image: "img/pnud.png"
+  url: "https://www.undp.org/es"
+  alianza: true
+
+- title: "FEMSA"
+  image: "img/femsa.webp"
+  url: "https://www.femsa.com/es/"
+  alianza: true

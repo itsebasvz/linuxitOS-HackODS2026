@@ -1,0 +1,21 @@
+```{=html}
+<div class="ong-logos" style="display: flex; justify-content: space-evenly; align-items: center; flex-wrap: wrap; gap: 2rem; padding: 1.5rem 1rem;">
+  <% for (const item of items) { %>
+    <% if (item.alianza !== true) { %>
+      <a href="<%= item.url %>" target="_blank">
+        <img src="<%= item.image %>" alt="<%= item.title %>" style="height: 80px; width: auto; object-fit: contain;">
+      </a>
+    <% } %>
+  <% } %>
+
+  <div class="ong-alianza" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem;">
+    <% for (const item of items) { %>
+      <% if (item.alianza === true) { %>
+        <a href="<%= item.url %>" target="_blank">
+          <img src="<%= item.image %>" alt="<%= item.title %>" style="height: 80px; width: auto; object-fit: contain;">
+        </a>
+      <% } %>
+    <% } %>
+  </div>
+</div>
+```

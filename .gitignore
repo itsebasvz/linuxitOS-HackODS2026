@@ -14,7 +14,6 @@ __pycache__/
 # Quarto y render
 .quarto/
 _site/
-docs/
 *.quarto_ipynb_*
 
 # Archivos de SO

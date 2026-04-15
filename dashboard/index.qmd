@@ -742,20 +742,20 @@ import pandas as pd
 # Localización profesional en español
 language_explorador = {
     "search": "Buscar:",
-    "lengthMenu": "Mostrar _MENU_ registros",
-    "info": "Mostrando _START_ a _END_ de _TOTAL_ municipios",
-    "infoEmpty": "0 municipios",
-    "infoFiltered": "(filtrados de _MAX_ total)",
+    "lengthMenu": "Mostrar _MENU_ municipios",
+    "info": "Mostrando de _START_ a _END_ municipios",
+    "infoEmpty": "Sin resultados",
+    "infoFiltered": "(filtrado de _MAX_ total)",
     "paginate": {
         "next": "Siguiente",
         "previous": "Anterior",
         "first": "Primero",
         "last": "Último"
     },
-    "zeroRecords": "No se encontraron coincidencias",
-    "emptyTable": "Sin datos disponibles",
-    "loadingRecords": "Cargando...",
-    "processing": "Procesando..."
+    "zeroRecords": "No se encontraron municipios coincidentes",
+    "emptyTable": "Cargando base de datos...",
+    "loadingRecords": "Procesando microdatos...",
+    "processing": "Actualizando..."
 }
 
 # =============================================================================
